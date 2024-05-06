@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { db } from "./firebase";
+import { addDoc, collection } from "firebase/firestore";
+const Form = () => {
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-function App() {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      // await db.collection("users").add({
+      //   email,
+      //   phoneNumber,
+      // });
+      await addDoc(collection(db, "userDetails"), { email, phoneNumber });
+      setEmail("");
+      setPhoneNumber("");
+      console.log("Data added to Firebase!");
+    } catch (error) {
+      console.error("Error adding data to Firebase: ", error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="tel"
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChange={(e) => setPhoneNumber(e.target.value)}
+      />
+      <button type="submit">Submit</button>
+    </form>
   );
-}
+};
 
-export default App;
+export default Form;
